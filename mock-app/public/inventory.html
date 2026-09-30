@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Electro Pi POS · Inventory</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header>
+    <span class="brand">Electro Pi POS</span>
+    <nav aria-label="Main">
+      <a href="/dashboard">Dashboard</a>
+      <a href="/inventory" data-testid="nav-inventory" aria-current="page">Inventory</a>
+    </nav>
+    <span data-testid="current-user"></span>
+    <button type="button" data-testid="logout">Log out</button>
+  </header>
+  <div class="toast-region" data-testid="toast-region" aria-live="polite"></div>
+  <main>
+    <div class="card">
+      <h1>Inventory</h1>
+      <form class="inline" data-testid="product-form">
+        <label>Product Name <input name="item_name" data-testid="product-name" required></label>
+        <label>Price <input name="price" data-testid="product-price" inputmode="decimal" required></label>
+        <label>SKU <input name="sku" data-testid="product-sku" placeholder="Auto-generated"></label>
+        <label>Quantity <input name="quantity" data-testid="product-quantity" type="number" min="0" value="1"></label>
+        <label>Category <select name="category_id" data-testid="product-category"></select></label>
+        <button class="primary" type="submit" data-testid="product-save">Save</button>
+      </form>
+    </div>
+    <div class="card">
+      <h2>Products</h2>
+      <div class="spinner" data-testid="spinner" role="progressbar" aria-label="Loading"></div>
+      <table data-testid="product-table" hidden>
+        <thead><tr><th>Name</th><th>SKU</th><th>Quantity</th><th>Price</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </main>
+  <script src="/app.js"></script>
+  <script>
+    if (requireAuth()) {
+      const form = document.querySelector('[data-testid="product-form"]');
+      const saveButton = document.querySelector('[data-testid="product-save"]');
+      const spinner = document.querySelector('[data-testid="spinner"]');
+      const table = document.querySelector('[data-testid="product-table"]');
+      const tbody = table.querySelector('tbody');
+
+      function renderRow(item) {
+        const row = document.createElement('tr');
+        row.dataset.testid = 'product-row';
+        for (const value of [item.item_name, item.sku, item.quantity, Number(item.price).toFixed(2)]) {
+          const cell = document.createElement('td');
+          cell.textContent = String(value);
+          row.append(cell);
+        }
+        tbody.append(row);
+      }
+
+      // Async data rendering behind a spinner
+      async function loadPage() {
+        spinner.hidden = false;
+        table.hidden = true;
+        const [categories, products] = await Promise.all([
+          api('/api/v1/categories'),
+          api('/api/v1/inventory/items'),
+        ]);
+        form.category_id.replaceChildren(...(categories.body || []).map(c => new Option(c.name, c.id)));
+        const electronics = (categories.body || []).find(c => c.name === 'Electronics');
+        if (electronics) form.category_id.value = String(electronics.id);
+        tbody.replaceChildren();
+        (products.body || []).forEach(renderRow);
+        spinner.hidden = true;
+        table.hidden = false;
+      }
+
+      form.addEventListener('submit', async event => {
+        event.preventDefault();
+        saveButton.disabled = true;
+        const payload = {
+          item_name: form.item_name.value.trim(),
+          sku: form.sku.value.trim() || `SKU-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`.toUpperCase(),
+          quantity: Number(form.quantity.value || 0),
+          price: Number(form.price.value),
+          category_id: Number(form.category_id.value),
+        };
+        const { status, body } = await api('/api/v1/inventory/items', {
+          method: 'POST',
+          body: JSON.stringify(payload),
+        });
+        saveButton.disabled = false;
+
+        if (status === 201) {
+          showToast(`Product "${body.item_name}" saved successfully`);
+          renderRow(body);
+          form.item_name.value = '';
+          form.price.value = '';
+          form.sku.value = '';
+        } else {
+          const details = body?.errors ? Object.values(body.errors).join('; ') : body?.error;
+          showToast(details || `Save failed (${status})`, 'error');
+        }
+      });
+
+      loadPage();
+    }
+  </script>
+</body>
+</html>

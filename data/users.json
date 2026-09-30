@@ -1,0 +1,15 @@
+{
+  "_comment": "Demo users seeded in mock-app/server.js (mock-only credentials). Real environments override them with the env vars listed in config/electroPi.config.js.",
+  "admin": {
+    "email": "admin@tenant-a.test",
+    "password": "Admin#123"
+  },
+  "cashier": {
+    "email": "cashier@tenant-a.test",
+    "password": "Cashier#123"
+  },
+  "tenantBAdmin": {
+    "email": "admin@tenant-b.test",
+    "password": "Admin#123"
+  }
+}

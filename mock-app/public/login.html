@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Electro Pi POS · Log in</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main>
+    <div class="card">
+      <h1>Electro Pi POS</h1>
+      <form data-testid="login-form">
+        <label>Email <input type="email" name="email" data-testid="login-email" autocomplete="username" required></label>
+        <label>Password <input type="password" name="password" data-testid="login-password" autocomplete="current-password" required></label>
+        <p class="error" data-testid="login-error" role="status"></p>
+        <button class="primary" type="submit" data-testid="login-submit">Log in</button>
+      </form>
+    </div>
+  </main>
+  <script src="/app.js"></script>
+  <script>
+    const form = document.querySelector('[data-testid="login-form"]');
+    const error = document.querySelector('[data-testid="login-error"]');
+    const submit = document.querySelector('[data-testid="login-submit"]');
+
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      error.textContent = '';
+      submit.disabled = true;
+      const { status, body } = await api('/api/v1/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email: form.email.value, password: form.password.value }),
+      });
+      submit.disabled = false;
+      if (status !== 200) {
+        error.textContent = body?.error || 'Login failed';
+        return;
+      }
+      session.save(body.access_token, body.user);
+      window.location.assign('/dashboard');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "_comment": "Products entered through the Inventory UI. Names get a unique suffix at runtime; prices are typed as the user would.",
+  "addProduct": {
+    "name": "Wireless Mouse",
+    "price": "25.00"
+  },
+  "listedProduct": {
+    "name": "USB-C Hub",
+    "price": "49.90"
+  },
+  "tenantIsolationProduct": {
+    "name": "Barcode Scanner",
+    "price": "120.00"
+  },
+  "successToastText": "saved successfully"
+}

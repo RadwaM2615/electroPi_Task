@@ -1,0 +1,21 @@
+{
+  "name": "electroPi_Task",
+  "version": "1.0.0",
+  "description": "Electro Pi QA Automation Engineer technical assessment: Playwright UI and API tests and a CI pipeline for a multi-tenant POS app",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test tests/ui",
+    "test:api": "playwright test tests/api",
+    "test:smoke": "playwright test --grep @smoke",
+    "report": "playwright show-report",
+    "mock": "node mock-app/server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@playwright/test": "^1.61.0",
+    "@types/node": "^26.0.0"
+  }
+}

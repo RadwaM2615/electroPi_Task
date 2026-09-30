@@ -1,0 +1,27 @@
+{
+  "_comment": "Test data for POST /api/v1/inventory/items. SKUs are made unique at runtime by data/factories/productFactory.js (skuPrefix + unique suffix).",
+  "validItem": {
+    "item_name": "Wireless Mouse",
+    "skuPrefix": "MS",
+    "quantity": 50,
+    "price": 25.00,
+    "category_id": 3
+  },
+  "boundaries": {
+    "quantity": 0,
+    "price": 0.01,
+    "itemNameMaxLength": 100
+  },
+  "invalidAuthHeaders": [
+    { "name": "missing", "headers": {} },
+    { "name": "malformed", "headers": { "Authorization": "Bearer not-a-real-token" } },
+    { "name": "wrong scheme", "headers": { "Authorization": "Basic YWRtaW46YWRtaW4=" } }
+  ],
+  "invalidValues": [
+    { "field": "price", "value": -5 },
+    { "field": "quantity", "value": "fifty" },
+    { "field": "category_id", "value": 9999 }
+  ],
+  "duplicateItemName": "Another Mouse",
+  "tooPrecisePrice": 19.999
+}

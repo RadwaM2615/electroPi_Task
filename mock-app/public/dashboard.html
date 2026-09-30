@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Electro Pi POS · Dashboard</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header>
+    <span class="brand">Electro Pi POS</span>
+    <nav aria-label="Main">
+      <a href="/dashboard" aria-current="page">Dashboard</a>
+      <a href="/inventory" data-testid="nav-inventory">Inventory</a>
+    </nav>
+    <span data-testid="current-user"></span>
+    <button type="button" data-testid="logout">Log out</button>
+  </header>
+  <main>
+    <div class="card">
+      <h1>Dashboard</h1>
+      <p>Welcome back. Use the <strong>Inventory</strong> module to manage your store's products.</p>
+    </div>
+  </main>
+  <script src="/app.js"></script>
+  <script>requireAuth();</script>
+</body>
+</html>

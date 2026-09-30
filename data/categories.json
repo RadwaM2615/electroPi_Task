@@ -1,0 +1,5 @@
+{
+  "_comment": "Category ids in the seeded test tenants. Tests never assume an id means 'Electronics'; the DB query confirms the name through the join.",
+  "tenantAElectronics": 3,
+  "tenantBElectronics": 4
+}
